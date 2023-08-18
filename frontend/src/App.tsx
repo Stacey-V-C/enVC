@@ -8,7 +8,9 @@ import { setSelectedData } from "./state/data";
 import { WaveInSQL } from "../wailsjs/go/controllers/Controller";
 import { PullData } from "../wailsjs/go/services/UIReceiver";
 
-initKeybindings();
+initKeybindings({
+  setSelectedData,
+});
 
 const [events, setEvents] = createEventStore();
 
@@ -17,12 +19,6 @@ export const [id, setId] = createSignal("");
 createEffect(() => {
   if (id()) PullData(id()).then(setSelectedData);
 });
-
-const handleClick = () => {
-  WaveInSQL().then((res) => {
-    setId(res);
-  });
-}
 
 function App() {
   return (

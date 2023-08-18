@@ -5,6 +5,7 @@ import (
 	"nvc/controllers"
 	"nvc/services"
 	"nvc/types"
+	"nvc/util"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -14,12 +15,16 @@ import (
 var assets embed.FS
 
 func main() {
+	util.LoadEnv()
 	// Create an instance of the app structure
 	app := NewApp()
 
 	broadcaster := services.NewBroadcaster()
 
-	controller := controllers.NewController(broadcaster.GetChannel(types.SQL))
+	controller := controllers.NewController(
+		broadcaster.GetChannel(types.SQL),
+		broadcaster.GetChannel(types.AppError),
+	)
 
 	return_adder := services.NewReturnAdder(
 		make(chan types.NVC_Event),

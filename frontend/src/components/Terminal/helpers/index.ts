@@ -1,18 +1,29 @@
 import {
-    previousInputPointer,
-    setPreviousInputPointer,
-    previousInputs,
-    setPreviousInputs,
-    termInput,
-    setTermInput
+  previousInputPointer,
+  setPreviousInputPointer,
+  previousInputs,
+  setPreviousInputs,
+  termInput,
+  setTermInput
 } from ".."
 
+import { MODES, activeMode } from "../../../state/modes"
+
 const storeAndResetInput = () => {
+  const mode = MODES[activeMode()];
+
+  const {
+    statement = termInput(),
+    leftOvers = ""
+  } = mode?.validate(termInput());
+
+  if (statement) mode.send(statement);
+
   setPreviousInputs((prev) =>
     [
       ...prev,
       {
-        text: termInput(),
+        text: statement,
         odd: prev?.length
           ? !prev[prev.length - 1].odd
           : true
@@ -20,7 +31,7 @@ const storeAndResetInput = () => {
     ]
   );
 
-  setTermInput("");
+  setTermInput(leftOvers);
 }
 
 export const handleInput = (event: Event) => {

@@ -5,7 +5,7 @@ import runTailwindOnHmr from './plugins/tw';
 export default defineConfig({
   plugins: [
     solidPlugin(), 
-    // runTailwindOnHmr()
+    runTailwindOnHmr()
   ],
   build: {
     target: 'esnext',
