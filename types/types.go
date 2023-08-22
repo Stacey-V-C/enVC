@@ -16,7 +16,7 @@ type SubscriberMap map[EventType][]chan NVC_Event // many channels to broadcast 
 type NVC_Event struct {
 	Action  string
 	Id      string
-	Payload string
+	Payload *string
 }
 
 type Subscriber interface {
