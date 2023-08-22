@@ -1,20 +1,19 @@
 package services
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
-	"nvc/types"
 	ut "nvc/util"
 	"regexp"
 	"strings"
 )
 
 type SQLProcesser struct {
-	conn       *SQLConnection
-	sqlChanIn  chan types.NVC_Event
-	sqlChanOut chan types.NVC_Event
-	errChanOut chan types.NVC_Event
+	//model *DataModel // maybe?  or the listener can just have the context to pass this
+}
+
+func NewSQLProcesser() SQLProcesser {
+	return SQLProcesser{}
 }
 
 type Table struct {
@@ -58,108 +57,6 @@ var NVCDataModel = DataModel{
 			},
 		},
 	},
-}
-
-func (s *SQLProcesser) RunQuery(id, q string) {
-	// how do we get the datamodel hmmmm have to use some sort of context
-
-	requestedData, modifiedQuery, err := s.parseQueryReturning(NVCDataModel, q)
-
-	if err != nil {
-		eStr := err.Error()
-
-		s.errChanOut <- types.NVC_Event{
-			Action:  "sql_error",
-			Id:      id,
-			Payload: &eStr,
-		}
-		return
-	}
-
-	var numCols int
-	var query string
-
-	if modifiedQuery == nil {
-		numCols = len(requestedData.columns)
-		query = q
-	} else {
-		numCols = len(NVCDataModel.GetTable(requestedData.name).columns)
-		query = *modifiedQuery
-	}
-
-	resultSet, err := s.conn.GetResultSetAsStrings(query, numCols)
-
-	if err != nil {
-		eStr := err.Error()
-
-		s.errChanOut <- types.NVC_Event{
-			Action:  "sql_error",
-			Id:      id,
-			Payload: &eStr,
-		}
-		return
-	}
-
-	if modifiedQuery != nil {
-		resultBytes, err := json.Marshal(resultSet)
-
-		if err != nil {
-			eStr := err.Error()
-
-			s.errChanOut <- types.NVC_Event{
-				Action:  "json_error",
-				Id:      id,
-				Payload: &eStr,
-			}
-			return
-		}
-
-		resultStr := string(resultBytes)
-
-		s.sqlChanOut <- types.NVC_Event{
-			Action:  "sql_raw_result",
-			Id:      id,
-			Payload: &resultStr,
-		}
-
-		filteredResults, err := s.filterResults(
-			requestedData.columns,
-			resultSet,
-			NVCDataModel.GetTable(requestedData.name).columns,
-		)
-
-		if err != nil {
-			eStr := err.Error()
-
-			s.errChanOut <- types.NVC_Event{
-				Action:  "sql_error",
-				Id:      id,
-				Payload: &eStr,
-			}
-			return
-		}
-
-		filteredResultBytes, err := json.Marshal(filteredResults)
-
-		if err != nil {
-			eStr := err.Error()
-
-			s.errChanOut <- types.NVC_Event{
-				Action:  "json_error",
-				Id:      id,
-				Payload: &eStr,
-			}
-			return
-		}
-
-		filteredResultStr := string(filteredResultBytes)
-
-		s.sqlChanOut <- types.NVC_Event{
-			Action:  "sql_result_filtered",
-			Id:      id,
-			Payload: &filteredResultStr,
-		}
-	}
 }
 
 // requestedColumns, err, updatedQuery := parseQueryReturning(model, query)

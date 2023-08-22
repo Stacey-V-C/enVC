@@ -13,7 +13,7 @@ type SQLConnection struct {
 	db  *sql.DB
 }
 
-func NewSQLConnection(ctx context.Context) *SQLConnection {
+func NewSQLConnection(ctx context.Context) SQLConnection {
 	address, exists := os.LookupEnv("SQL_ADDRESS")
 
 	if exists == false {
@@ -26,7 +26,7 @@ func NewSQLConnection(ctx context.Context) *SQLConnection {
 		panic(err)
 	}
 
-	return &SQLConnection{
+	return SQLConnection{
 		ctx,
 		db,
 	}

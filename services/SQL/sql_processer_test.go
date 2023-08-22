@@ -6,12 +6,7 @@ import (
 )
 
 func TestParseInsertQuery(t *testing.T) {
-	mSqlController := SQLProcesser{
-		conn:       nil,
-		sqlChanIn:  nil,
-		sqlChanOut: nil,
-		errChanOut: nil,
-	}
+	mSqlController := SQLProcesser{}
 
 	mDataModel := DataModel{
 		tables: []Table{
