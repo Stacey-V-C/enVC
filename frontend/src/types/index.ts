@@ -20,4 +20,33 @@ export type Events = {
   chromaResults: AsyncEvent<string>[],
 }
 
-export type Result = any[];
+export type ResultType = 'sqlFormattedResults' | 'sqlRawResults' | 'chromaResults'
+
+// export type Result = {
+//   dataType: ResultType,
+//   data: any[],
+// }
+
+export type Result =
+//   | {
+//     dataType: 'sqlFormattedResults',
+//     data: SQLResult,
+//   }
+//   | {
+//     dataType: 'sqlRawResults',
+//     data: SQLResult,
+//   }
+
+// export type GeneralResult =
+  | {
+    dataType: ResultType,
+    input: string,
+    values: string[]
+  }
+  | {
+    dataType: ResultType,
+    input: string,
+    headers: string[],
+    values: string[][],
+  }
+

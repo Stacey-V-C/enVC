@@ -17,19 +17,21 @@ const storeAndResetInput = () => {
     leftOvers = ""
   } = mode?.validate(termInput());
 
-  if (statement) mode.send(statement);
+  if (statement) {
+    mode.send(statement);
 
-  setPreviousInputs((prev) =>
-    [
-      ...prev,
-      {
-        text: statement,
-        odd: prev?.length
-          ? !prev[prev.length - 1].odd
-          : true
-      }
-    ]
-  );
+    setPreviousInputs((prev) =>
+      [
+        ...prev,
+        {
+          text: statement,
+          odd: prev?.length
+            ? !prev[prev.length - 1].odd
+            : true
+        }
+      ]
+    );
+  }
 
   setTermInput(leftOvers);
 }

@@ -21,15 +21,15 @@ export const MODES: Record<string, ModeObject> = {
       border: "1.5px ridge hsl(110, 60%, 45%)"
     },
     validate: (query: string) => {
-      const completeQuery = (!query?.includes(";"))
+      const completeQuery = (query?.includes(";"))
 
-      const [statement, leftOvers] = completeQuery
+      const [statement, ...leftOvers] = completeQuery
         ? query?.split(";")
-        : ["", query]
+        : ["", [query]]
 
       return {
-        statement,
-        leftOvers
+        statement: statement ? `${statement};` : "",
+        leftOvers: leftOvers.join(";")
       }
     },
     send: SendSQL
