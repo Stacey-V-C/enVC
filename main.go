@@ -26,13 +26,6 @@ func main() {
 		broadcaster.GetChannel(types.AppError),
 	)
 
-	return_adder := services.NewReturnAdder(
-		make(chan types.NVC_Event),
-		broadcaster.GetChannel(types.SQL),
-	)
-
-	broadcaster.RegisterSubscriber(types.SQL, return_adder.GetReceiveChannel())
-
 	ui_receiver := services.NewUIReceiver(
 		app.ctx,
 		broadcaster.GetChannel(types.SQL),
@@ -41,8 +34,6 @@ func main() {
 	broadcaster.RegisterSubscriber(types.SQL, ui_receiver.GetReceiveChannel())
 
 	broadcaster.Listen()
-
-	return_adder.Listen()
 
 	ui_receiver.Listen()
 
