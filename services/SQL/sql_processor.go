@@ -1,10 +1,9 @@
-package controllers
+package services
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"nvc/services"
 	"nvc/types"
 	ut "nvc/util"
 	"regexp"
@@ -12,7 +11,7 @@ import (
 )
 
 type SQLProcesser struct {
-	conn       *services.SQLConnection
+	conn       *SQLConnection
 	sqlChanIn  chan types.NVC_Event
 	sqlChanOut chan types.NVC_Event
 	errChanOut chan types.NVC_Event
