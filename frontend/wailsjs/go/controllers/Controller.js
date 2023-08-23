@@ -5,7 +5,3 @@
 export function SendSQL(arg1) {
   return window['go']['controllers']['Controller']['SendSQL'](arg1);
 }
-
-export function WaveInSQL() {
-  return window['go']['controllers']['Controller']['WaveInSQL']();
-}

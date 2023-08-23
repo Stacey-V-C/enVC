@@ -22,18 +22,6 @@ func NewController(c, e chan types.NVC_Event) *Controller {
 	}
 }
 
-func (c *Controller) WaveInSQL() string {
-	id := uuid.New().String()
-
-	c.sendChannel <- types.NVC_Event{
-		Action:  "select",
-		Id:      id,
-		Payload: "SELECT * FROM users",
-	}
-
-	return id
-}
-
 func (c *Controller) SendSQL(query string) (id string, valid bool) {
 	id = uuid.New().String()
 
@@ -47,13 +35,13 @@ func (c *Controller) SendSQL(query string) (id string, valid bool) {
 		c.errChannel <- types.NVC_Event{
 			Action:  "invalid sql::action",
 			Id:      id,
-			Payload: query,
+			Payload: &query,
 		}
 	} else {
 		c.sendChannel <- types.NVC_Event{
 			Action:  eventType,
 			Id:      id,
-			Payload: query,
+			Payload: &query,
 		}
 	}
 

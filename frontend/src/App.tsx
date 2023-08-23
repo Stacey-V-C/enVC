@@ -5,7 +5,6 @@ import { EventBar } from "./components/EventBar";
 import { createEventStore } from "./state/events";
 import { uiState, initKeybindings } from "./state/ui";
 import { setSelectedData } from "./state/data";
-import { WaveInSQL } from "../wailsjs/go/controllers/Controller";
 import { PullData } from "../wailsjs/go/services/UIReceiver";
 
 initKeybindings({
