@@ -1,9 +1,3 @@
-export type SQLResult = {
-  statement: string,
-  headers: string[],
-  values: string[][],
-}
-
 export type EventType = 'error' | 'sql' | 'chroma'
 
 export type AsyncEvent<T> = {
@@ -16,37 +10,30 @@ export type AsyncEvent<T> = {
 
 export type Events = {
   errors: AsyncEvent<string>[],
-  sqlResults: AsyncEvent<SQLResult>[],
+  sqlResults: AsyncEvent<LabeledResult>[],
   chromaResults: AsyncEvent<string>[],
 }
 
-export type ResultType = 'sqlFormattedResults' | 'sqlRawResults' | 'chromaResults'
+export type LabeledResultType =
+  | 'sqlFormattedResults'
+  | 'sqlRawResults'
+  | 'chromaResults'
 
-// export type Result = {
-//   dataType: ResultType,
-//   data: any[],
-// }
+export type UnlabeledResultType = 'TODO'
 
-export type Result =
-//   | {
-//     dataType: 'sqlFormattedResults',
-//     data: SQLResult,
-//   }
-//   | {
-//     dataType: 'sqlRawResults',
-//     data: SQLResult,
-//   }
+export type ResultType = LabeledResultType | UnlabeledResultType
 
-// export type GeneralResult =
-  | {
-    dataType: ResultType,
-    input: string,
-    values: string[]
-  }
-  | {
-    dataType: ResultType,
-    input: string,
-    headers: string[],
-    values: string[][],
-  }
+export type UnlabeledResult = {
+  dataType: UnlabeledResultType,
+  input?: string,
+  data: string[]
+}
 
+export type LabeledResult = {
+  dataType: LabeledResultType,
+  input?: string,
+  columns: string[],
+  data: string[][],
+}
+
+export type Result = UnlabeledResult | LabeledResult
