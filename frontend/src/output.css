@@ -542,16 +542,55 @@ video {
   position: relative;
 }
 
+.-left-8 {
+  left: -2rem;
+}
+
 .left-0 {
   left: 0px;
+}
+
+.left-6 {
+  left: 1.5rem;
 }
 
 .right-0 {
   right: 0px;
 }
 
+.top-6 {
+  top: 1.5rem;
+}
+
+.z-\[500\] {
+  z-index: 500;
+}
+
 .m-1 {
   margin: 0.25rem;
+}
+
+.m-4 {
+  margin: 1rem;
+}
+
+.mx-0 {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+.mx-4 {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.my-4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.mr-4 {
+  margin-right: 1rem;
 }
 
 .inline-block {
@@ -570,8 +609,16 @@ video {
   height: 0.5rem;
 }
 
+.h-24 {
+  height: 6rem;
+}
+
 .h-5 {
   height: 1.25rem;
+}
+
+.h-auto {
+  height: auto;
 }
 
 .h-full {
@@ -590,12 +637,28 @@ video {
   width: 0.5rem;
 }
 
+.w-24 {
+  width: 6rem;
+}
+
+.w-48 {
+  width: 12rem;
+}
+
 .w-5 {
   width: 1.25rem;
 }
 
+.w-8 {
+  width: 2rem;
+}
+
 .w-\[300px\] {
   width: 300px;
+}
+
+.w-auto {
+  width: auto;
 }
 
 .w-full {
@@ -610,6 +673,14 @@ video {
   flex-direction: column;
 }
 
+.items-start {
+  align-items: flex-start;
+}
+
+.items-center {
+  align-items: center;
+}
+
 .justify-start {
   justify-content: flex-start;
 }
@@ -618,12 +689,22 @@ video {
   justify-content: flex-end;
 }
 
+.justify-center {
+  justify-content: center;
+}
+
 .justify-stretch {
   justify-content: stretch;
 }
 
 .overflow-hidden {
   overflow: hidden;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .rounded-full {
@@ -638,8 +719,17 @@ video {
   border-width: 0px;
 }
 
+.border-2 {
+  border-width: 2px;
+}
+
 .border-solid {
   border-style: solid;
+}
+
+.border-\[\#4a5568\] {
+  --tw-border-opacity: 1;
+  border-color: rgb(74 85 104 / var(--tw-border-opacity));
 }
 
 .border-off-white {
@@ -683,6 +773,10 @@ video {
   line-height: 1rem;
 }
 
+.font-bold {
+  font-weight: 700;
+}
+
 .opacity-0 {
   opacity: 0;
 }
@@ -709,11 +803,19 @@ video {
   line-height: 1.5;
   font-weight: 400;
   color-scheme: light dark;
-  color: rgba(11, 7, 20, 0.87);
-  background-color: rgba(248, 249, 227, 0.87);
+  color: rgba(11, 7, 20);
+  background-color: rgba(248, 249, 227);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+}
+
+.tooltip {
+  display: none;
+}
+
+.tooltip-controller:hover + .tooltip {
+  display: inline;
 }

@@ -13,10 +13,14 @@ initKeybindings({
 
 const [events, setEvents] = createEventStore();
 
-export const [id, setId] = createSignal("");
+export const [requestedId, setRequestedId] = createSignal("");
 
 createEffect(() => {
-  if (id()) PullData(id()).then(setSelectedData);
+  const id = requestedId();
+  if (id) PullData(id)
+    .then(setSelectedData)
+    // find out what Wails allows for error passing
+    .catch(() => console.log("No result for id: " + id));
 });
 
 function App() {
