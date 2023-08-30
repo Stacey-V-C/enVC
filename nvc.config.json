@@ -1,0 +1,56 @@
+{
+  "dataModels": {
+    "base": {
+      "topic": {
+        "fields": {
+          "id": "number",
+          "title": "string",
+          "description": "string",
+          "created_at": "date"
+        },
+        "chroma": {
+          "idPrefix": "t",
+          "contentField": "description"
+        }
+      },
+      "comment": {
+        "fields": {
+          "id": "number",
+          "p_id": "number",
+          "p_type": "string",
+          "content": "string",
+          "created_at": "date"
+        },
+        "chroma": {
+          "idPrefix": "c",
+          "contentField": "content"
+        }
+      },
+      "directed_relation": {
+        "fields": {
+          "id": "number",
+          "s_p_id": "number",
+          "s_p_type": "string",
+          "e_p_id": "number",
+          "e_p_type": "string",
+          "content": "string",
+          "created_at": "date"
+        },
+        "chroma": {
+          "idPrefix": "dr",
+          "contentField": [
+            {
+              "lookup": "s_p_id",
+              "from": "s_p_type"
+            },
+            "content",
+            {
+              "lookup": "e_p_id",
+              "from": "e_p_type"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
