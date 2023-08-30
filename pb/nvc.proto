@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package nvc;
+
+option go_package = "github.com/stacey-v-c/nvc/pb";
+
+service SQLToChromaListener {
+  rpc LogSQLAction(SQLAction) returns (ChromaResult) {}
+}
+
+enum SQLtype {
+  UNSPECIFIED = 0;
+  CREATE = 1;
+  UPDATE = 2;
+  MIGRATE = 3;
+  DELETE = 4;
+}
+
+message Value {
+  repeated string values = 1;
+}
+
+message SQLAction {
+  SQLtype type = 1;
+  string table = 2;
+  repeated string columns = 3;
+  repeated Value values = 12;
+  string dataModel = 5;
+//   string valuesJson = 4;
+  /*
+  this would entirely remove need for JSON serialization hmmmmmm
+
+
+  seems like pretty intense thought would have to go into like...
+  is this even an optimization over json if that means it just needs to get
+  parsed from the columns on every other side?  i'd rather not be using
+  sql stuff in every language... i mean for things that DON'T need types
+  i.e. the front end we could use this but idk how common that will be 
+  and handling multiple cases is a lot...
+  */
+}
+
+/* 
+  if streaming, could do something like...
+
+  message SQLMessage {
+    message Definition {
+      SQLtype type = 1;
+      string table = 2;
+      repeated string columns = 3;
+    }
+    message Values {
+      repeated Value values = 1;
+
+      (or string for JSON chunks?  idk)
+    }
+    oneof sql {
+      Definition definition = 1;
+      Values values = 2;
+    }
+  }
+
+  once again, overengineering for now but nice notes for things to 
+  maybe play with at some point
+*/
+
+
+// if this is the whole result it could be used for a lot more than just Chroma
+
+message ChromaResult {
+  // might not even need to define this in message?
+  // they allow sending status code but it might be good to have app logic failures too
+  bool success = 1;
+//   int32 insertedCount = 2;
+  oneof result {
+    int32 insertedCount = 2;
+    string error = 3;
+  }
+}
