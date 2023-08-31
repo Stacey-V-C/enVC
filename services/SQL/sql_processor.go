@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"fmt"
+	"nvc/types"
 	ut "nvc/util"
 	"regexp"
 	"strings"
@@ -16,48 +17,18 @@ func NewSQLProcesser() SQLProcesser {
 	return SQLProcesser{}
 }
 
-type Table struct {
-	name    string
-	columns []string
-}
-
-type DataModel struct {
-	tables []Table
-}
-
-func (d *DataModel) GetTableNames() []string {
-	tableNames := make([]string, len(d.tables))
-
-	for i, table := range d.tables {
-		tableNames[i] = table.name
-	}
-
-	return tableNames
-}
-
-func (d *DataModel) GetTable(tableName string) *Table {
-	for _, table := range d.tables {
-		if table.name == tableName {
-			return &table
-		}
-	}
-
-	return nil
-}
-
-var NVCDataModel = DataModel{
-	tables: []Table{
-		{
-			name: "topics",
-			columns: []string{
+var NVCDataModel = types.NewDataModel(
+	[]types.Table{
+		types.NewTable(
+			"topics",
+			[]string{
 				"id",
 				"title",
 				"description",
 				"created_at",
 			},
-		},
-	},
-}
+		),
+	})
 
 // requestedColumns, err, updatedQuery := parseQueryReturning(model, query)
 
@@ -86,7 +57,7 @@ func (s *SQLProcesser) filterResults(requestedCols []string, resultSet [][]strin
 	return filteredResultSet, nil
 }
 
-func (s *SQLProcesser) parseQueryReturning(model DataModel, query string) (*Table, *string, error) {
+func (s *SQLProcesser) parseQueryReturning(model types.DataModel, query string) (*types.Table, *string, error) {
 	query = strings.ReplaceAll(query, "\n", " ")
 	query = strings.ReplaceAll(query, "\t", " ")
 
@@ -101,7 +72,7 @@ func (s *SQLProcesser) parseQueryReturning(model DataModel, query string) (*Tabl
 	}
 }
 
-func (s *SQLProcesser) parseSelectQuery(model DataModel, query string) (*Table, *string, error) {
+func (s *SQLProcesser) parseSelectQuery(model types.DataModel, query string) (*types.Table, *string, error) {
 	getSelectDb, err := regexp.Compile(`(?i)SELECT\s+(.+)\s+FROM\s+([a-z_]+)\s`)
 	if err != nil {
 		print(err)
@@ -136,16 +107,15 @@ func (s *SQLProcesser) parseSelectQuery(model DataModel, query string) (*Table, 
 			return nil, nil, err
 		}
 	} else {
-		columns = table.columns
+		columns = table.GetColumns()
 	}
 
-	return &Table{
-		name:    table.name,
-		columns: columns,
-	}, &query, nil
+	res := types.NewTable(table.GetName(), columns)
+
+	return &res, &query, nil
 }
 
-func (s *SQLProcesser) parseInsertQuery(model DataModel, query string) (*Table, *string, error) {
+func (s *SQLProcesser) parseInsertQuery(model types.DataModel, query string) (*types.Table, *string, error) {
 	getTableName, err := regexp.Compile(`(?i)INSERT\s+INTO\s+([a-z_]+)\s`)
 	if err != nil {
 		return nil, nil, err
@@ -184,7 +154,7 @@ func (s *SQLProcesser) parseInsertQuery(model DataModel, query string) (*Table, 
 		query = strings.Join(newQuery, "")
 	} else {
 		if returningStmtMatches[1] == "*" {
-			columns = table.columns
+			columns = table.GetColumns()
 		} else {
 			columns = strings.Split(returningStmtMatches[1], ",")
 
@@ -202,16 +172,15 @@ func (s *SQLProcesser) parseInsertQuery(model DataModel, query string) (*Table, 
 		}
 	}
 
-	return &Table{
-		name:    table.name,
-		columns: columns,
-	}, &query, nil
+	res := types.NewTable(table.GetName(), columns)
+
+	return &res, &query, nil
 }
 
-func validateColumns(table *Table, given_columns []string) error {
+func validateColumns(table *types.Table, given_columns []string) error {
 	for _, c := range given_columns {
-		if ut.Contains[string](table.columns, c) == false {
-			errorMessage := fmt.Sprintf("Column %s does not exist in table %s", c, table.name)
+		if ut.Contains[string](table.GetColumns(), c) == false {
+			errorMessage := fmt.Sprintf("Column %s does not exist in table %s", c, table.GetName())
 			return errors.New(errorMessage)
 		}
 	}

@@ -2,37 +2,37 @@ package services
 
 import (
 	"fmt"
+	"nvc/types"
 	"testing"
 )
 
 func TestParseInsertQuery(t *testing.T) {
 	mSqlController := SQLProcesser{}
 
-	mDataModel := DataModel{
-		tables: []Table{
-			{
-				name: "users",
-				columns: []string{
-					"id",
-					"username",
-					"password",
-				},
-			},
+	mBaseTable := types.NewTable(
+		"users",
+		[]string{
+			"id",
+			"username",
+			"password",
 		},
-	}
+	)
 
-	mIdUserNameTable := Table{
-		name: "users",
-		columns: []string{
+	mDataModel := types.NewDataModel(
+		[]types.Table{mBaseTable})
+
+	mIdUserNameTable := types.NewTable(
+		"users",
+		[]string{
 			"id",
 			"username",
 		},
-	}
+	)
 
-	mNoReturnTable := Table{
-		name:    "users",
-		columns: []string{},
-	}
+	mNoReturnTable := types.NewTable(
+		"users",
+		[]string{},
+	)
 
 	queries := map[string]string{
 		"withWildcard":            "INSERT INTO users (username, password) VALUES ('test', 'test') RETURNING *;",
@@ -45,14 +45,14 @@ func TestParseInsertQuery(t *testing.T) {
 	var cases = []struct {
 		testName      string
 		query         string
-		expectedTable *Table
+		expectedTable *types.Table
 		expectedError error
 		expectedQuery string
 	}{
 		{
 			testName:      "Already returning wildcard",
 			query:         queries["withWildcard"],
-			expectedTable: &mDataModel.tables[0],
+			expectedTable: &mBaseTable,
 			expectedQuery: queries["withWildcard"],
 			expectedError: nil,
 		},
@@ -107,17 +107,17 @@ func TestParseInsertQuery(t *testing.T) {
 			}
 
 			if table != nil && c.expectedTable != nil {
-				if table.name != c.expectedTable.name {
-					t.Errorf("Expected table name to be %s, got %s", c.expectedTable.name, table.name)
+				if table.GetName() != c.expectedTable.GetName() {
+					t.Errorf("Expected table name to be %s, got %s", c.expectedTable.GetName(), table.GetName())
 				}
 
-				if len(table.columns) != len(c.expectedTable.columns) {
-					t.Errorf("Expected table columns to be %s, got %s", c.expectedTable.columns, table.columns)
+				if len(table.GetColumns()) != len(c.expectedTable.GetColumns()) {
+					t.Errorf("Expected table columns to be %s, got %s", c.expectedTable.GetColumns(), table.GetColumns())
 				}
 
-				for i, column := range table.columns {
-					if column != c.expectedTable.columns[i] {
-						t.Errorf("Expected table column to be %s, got %s", c.expectedTable.columns[i], column)
+				for i, column := range table.GetColumns() {
+					if column != c.expectedTable.GetColumns()[i] {
+						t.Errorf("Expected table column to be %s, got %s", c.expectedTable.GetColumns()[i], column)
 					}
 				}
 			}
