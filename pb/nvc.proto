@@ -30,7 +30,6 @@ message SQLAction {
   /*
   this would entirely remove need for JSON serialization hmmmmmm
 
-
   seems like pretty intense thought would have to go into like...
   is this even an optimization over json if that means it just needs to get
   parsed from the columns on every other side?  i'd rather not be using
