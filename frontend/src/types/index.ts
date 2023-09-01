@@ -14,10 +14,16 @@ export type Events = {
   chromaResults: AsyncEvent<string>[],
 }
 
+export enum Res {
+  SQL_FORMATTED_RESULTS = 'sqlFormattedResults',
+  SQL_RAW_RESULTS = 'sqlRawResults',
+  CHROMA_RESULTS = 'chromaResults',
+}
+
 export type LabeledResultType =
-  | 'sqlFormattedResults'
-  | 'sqlRawResults'
-  | 'chromaResults'
+  | Res.SQL_FORMATTED_RESULTS
+  | Res.SQL_RAW_RESULTS
+  | Res.CHROMA_RESULTS
 
 export type UnlabeledResultType = 'TODO'
 

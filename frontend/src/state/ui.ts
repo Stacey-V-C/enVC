@@ -1,6 +1,6 @@
 import { Setter } from "solid-js";
 import { createStore } from "solid-js/store";
-import { Result, ResultType } from "../types";
+import { Res, Result, ResultType } from "../types";
 import * as UIReceiver from "../../wailsjs/go/services/UIReceiver";
 
 export const [uiState, setUiState] = createStore({
@@ -49,7 +49,7 @@ const toggleDataPanel = () => {
 }
 
 const dataResultsActions: ResultType[] = [
-  "sqlFormattedResults",
+  Res.SQL_FORMATTED_RESULTS,
 ]
 
 // think none of these have to be async because the results get posted elsewhere?
@@ -62,9 +62,7 @@ const loadActiveQueryData = ({
     UIReceiver.PullData(uiState.activeQuery).then(result => {
       if (!result) return;
 
-      const [payloadString, action] = result;
-
-      const payload = extractPayload(payloadString);
+      const { action, payload } = result;
 
       if (dataResultsActions.includes(<ResultType>action)) {
         setSelectedData({
@@ -74,18 +72,6 @@ const loadActiveQueryData = ({
       }
     });
   }
-}
-
-const extractPayload = (raw: string) => {
-  const obj = JSON.parse(raw);
-
-  for (const key in obj) {
-    if (!["values", "headers", "input"].includes(key)) {
-      delete obj[key];
-    }
-  }
-
-  return obj;
 }
 
 const rerunActiveQuery = () => {
