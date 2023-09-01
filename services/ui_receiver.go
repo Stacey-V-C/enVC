@@ -9,14 +9,14 @@ import (
 type UIReceiver struct {
 	ctx         context.Context
 	sqlChannel  chan types.NVC_Event
-	heldResults map[string][]string
+	heldResults map[string]types.NVC_Event
 }
 
 func NewUIReceiver(ctx context.Context, sqlChannel chan types.NVC_Event) *UIReceiver {
 	return &UIReceiver{
 		ctx:         ctx,
 		sqlChannel:  sqlChannel,
-		heldResults: make(map[string][]string),
+		heldResults: make(map[string]types.NVC_Event),
 	}
 }
 
@@ -27,12 +27,12 @@ func (u *UIReceiver) Listen() {
 func ListenAndStoreResults(u *UIReceiver, channel chan types.NVC_Event) {
 	for input := range channel {
 		fmt.Println("UIReceiver received:", input)
-		results := [2]string{*input.Payload, input.Action}
-		u.heldResults[input.Id] = results[:]
+
+		u.heldResults[input.Id] = input
 	}
 }
 
-func (u *UIReceiver) PullData(id string) []string {
+func (u *UIReceiver) PullData(id string) types.NVC_Event {
 	return u.heldResults[id]
 }
 

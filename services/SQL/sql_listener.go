@@ -37,8 +37,9 @@ func (s *SQLListener) Listen() {
 		select {
 		case event := <-s.sqlChanIn:
 			switch event.Action {
-			case "sql_query":
-				s.RunQuery(event.Id, *event.Payload)
+			case types.SQL_QUERY:
+				payload := event.Payload.(*string)
+				s.RunQuery(event.Id, *payload) // TODO: type assertion
 			}
 		}
 	}
@@ -64,10 +65,10 @@ func (s *SQLListener) RunQuery(id, q string) {
 	var query string
 
 	if modifiedQuery == nil {
-		numCols = len(requestedData.columns)
+		numCols = len(requestedData.GetColumns())
 		query = q
 	} else {
-		numCols = len(NVCDataModel.GetTable(requestedData.name).columns)
+		numCols = len(NVCDataModel.GetTable(requestedData.GetName()).GetColumns())
 		query = *modifiedQuery
 	}
 
@@ -107,9 +108,9 @@ func (s *SQLListener) RunQuery(id, q string) {
 		}
 
 		filteredResults, err := s.proc.filterResults(
-			requestedData.columns,
+			requestedData.GetColumns(),
 			resultSet,
-			NVCDataModel.GetTable(requestedData.name).columns,
+			NVCDataModel.GetTable(requestedData.GetName()).GetColumns(),
 		)
 
 		if err != nil {
@@ -129,9 +130,12 @@ func (s *SQLListener) RunQuery(id, q string) {
 			eStr := err.Error()
 
 			s.errChanOut <- types.NVC_Event{
-				Action:  "json_error",
-				Id:      id,
-				Payload: &eStr,
+				Action: types.ERROR,
+				Id:     id,
+				Payload: &types.TypedError{
+					Type:    types.JSON_ERROR,
+					Message: eStr,
+				},
 			}
 			return
 		}

@@ -33,13 +33,16 @@ func (c *Controller) SendSQL(query string) (id string, valid bool) {
 
 	if !valid {
 		c.errChannel <- types.NVC_Event{
-			Action:  "invalid sql::action",
-			Id:      id,
-			Payload: &query,
+			Action: types.ERROR,
+			Id:     id,
+			Payload: &types.TypedError{
+				Type:    types.SQL_ERROR,
+				Message: "Invalid SQL action: " + query,
+			},
 		}
 	} else {
 		c.sendChannel <- types.NVC_Event{
-			Action:  eventType,
+			Action:  types.SQL_QUERY,
 			Id:      id,
 			Payload: &query,
 		}
